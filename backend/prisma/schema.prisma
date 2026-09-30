@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model TwitterVerification {
+  id                    String   @id @default(uuid())
+  walletAddress         String   @unique @db.VarChar(42)
+  twitterId             String   @unique @db.VarChar(32)
+  username              String   @db.VarChar(32)
+  followersCount        Int
+  accessTokenEncrypted  String?
+  refreshTokenEncrypted String?
+  tokenExpiresAt        DateTime?
+  verifiedAt            DateTime @default(now())
+  revokedAt             DateTime?
+  updatedAt             DateTime @updatedAt
+
+  @@index([followersCount, revokedAt])
+}
+
+model OAuthState {
+  id                    String   @id @default(uuid())
+  stateHash             String   @unique @db.Char(64)
+  walletAddress         String   @db.VarChar(42)
+  codeVerifierEncrypted String
+  expiresAt             DateTime
+  usedAt                DateTime?
+  createdAt             DateTime @default(now())
+
+  @@index([expiresAt])
+}
+
+model SignatureChallenge {
+  id            String   @id @default(uuid())
+  nonceHash     String   @unique @db.Char(64)
+  walletAddress String   @db.VarChar(42)
+  purpose       String   @db.VarChar(32)
+  expiresAt     DateTime
+  usedAt        DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([walletAddress, purpose, expiresAt])
+}
+
+model TxActivity {
+  id            String   @id @default(uuid())
+  walletAddress String   @db.VarChar(42)
+  epochId       BigInt
+  txCount       Int      @default(0)
+  gasSpentWei   Decimal  @db.Decimal(78, 0)
+  updatedAt     DateTime @updatedAt
+
+  @@unique([walletAddress, epochId])
+  @@index([epochId, txCount])
+}
+
+model IndexedTransaction {
+  hash          String  @id @db.Char(66)
+  blockNumber   Int
+  blockHash     String  @db.Char(66)
+  walletAddress String  @db.VarChar(42)
+  epochId       BigInt
+  gasSpentWei   Decimal @db.Decimal(78, 0)
+
+  @@index([blockNumber])
+  @@index([epochId, walletAddress])
+}
+
+model IndexerCursor {
+  chainId            Int      @id
+  firstBlockNumber   Int
+  firstBlockTimestamp Int
+  lastBlockNumber    Int
+  lastBlockHash      String   @db.Char(66)
+  lastBlockTimestamp Int
+  updatedAt          DateTime @updatedAt
+}
+
+model EligibilitySnapshot {
+  epochId       BigInt   @id
+  merkleRoot    String   @db.Char(66)
+  eligibleCount Int
+  snapshotUri   String?
+  payload       Json
+  createdAt     DateTime @default(now())
+  winners       Winner[]
+}
+
+model Winner {
+  id            String   @id @default(uuid())
+  epochId       BigInt
+  walletAddress String   @db.VarChar(42)
+  winnerIndex   Int
+  rank          Int
+  prizeAmount   Decimal  @db.Decimal(78, 0)
+  claimedAt     DateTime?
+  txHash        String?  @db.Char(66)
+  snapshot      EligibilitySnapshot @relation(fields: [epochId], references: [epochId])
+
+  @@unique([epochId, rank])
+  @@index([walletAddress])
+}
+
+model AuditLog {
+  id            String   @id @default(uuid())
+  action        String   @db.VarChar(64)
+  walletAddress String?  @db.VarChar(42)
+  detail        Json?
+  createdAt     DateTime @default(now())
+
+  @@index([createdAt])
+}
