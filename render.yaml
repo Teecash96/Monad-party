@@ -1,0 +1,190 @@
+# yaml-language-server: $schema=https://render.com/schema/render.yaml.json
+databases:
+  - name: proof-of-play-db
+    plan: basic-256mb
+    region: frankfurt
+    databaseName: proof_of_play
+    user: proof_of_play
+
+services:
+  - type: web
+    name: proof-of-play-api
+    runtime: node
+    region: frankfurt
+    plan: starter
+    rootDir: backend
+    buildCommand: npm ci && npm run db:generate && npm run build
+    preDeployCommand: npm run db:migrate
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: proof-of-play-db
+          property: connectionString
+      - key: MONAD_RPC_URL
+        value: https://testnet-rpc.monad.xyz
+      - key: MONAD_CHAIN_ID
+        value: "10143"
+      - key: REQUIRE_FULL_CONFIG
+        value: "true"
+      - key: REQUIRED_FEATURES
+        value: network,twitter,contracts
+      - key: PUBLISH_ROOT
+        value: "true"
+      - key: FRONTEND_URL
+        sync: false
+      - key: TWITTER_CLIENT_ID
+        sync: false
+      - key: TWITTER_CLIENT_SECRET
+        sync: false
+      - key: TWITTER_REDIRECT_URI
+        sync: false
+      - key: TOKEN_ENCRYPTION_KEY
+        generateValue: true
+      - key: ELIGIBILITY_REGISTRY_ADDRESS
+        sync: false
+      - key: RAFFLE_CORE_ADDRESS
+        sync: false
+      - key: RAFFLE_DEPLOYMENT_BLOCK
+        sync: false
+      - key: ADMIN_WALLET_ADDRESS
+        sync: false
+
+  - type: web
+    name: proof-of-play-web
+    runtime: node
+    region: frankfurt
+    plan: starter
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_MONAD_RPC_URL
+        value: https://testnet-rpc.monad.xyz
+      - key: NEXT_PUBLIC_MONAD_CHAIN_ID
+        value: "10143"
+      - key: NEXT_PUBLIC_MONAD_CHAIN_NAME
+        value: Monad Testnet
+      - key: NEXT_PUBLIC_MONAD_EXPLORER_URL
+        value: https://testnet.monadvision.com
+      - key: NEXT_PUBLIC_BACKEND_URL
+        sync: false
+      - key: NEXT_PUBLIC_RAFFLE_CORE_ADDRESS
+        sync: false
+      - key: NEXT_PUBLIC_ELIGIBILITY_REGISTRY_ADDRESS
+        sync: false
+      - key: NEXT_PUBLIC_SUPPORT_EMAIL
+        sync: false
+
+  - type: cron
+    name: proof-of-play-indexer
+    runtime: node
+    region: frankfurt
+    plan: starter
+    rootDir: backend
+    schedule: "0 * * * *"
+    buildCommand: npm ci && npm run db:generate && npm run build
+    startCommand: npm run indexer
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: proof-of-play-db
+          property: connectionString
+      - key: MONAD_RPC_URL
+        value: https://testnet-rpc.monad.xyz
+      - key: MONAD_CHAIN_ID
+        value: "10143"
+      - key: INDEXER_START_BLOCK
+        sync: false
+
+  - type: cron
+    name: proof-of-play-twitter-recheck
+    runtime: node
+    region: frankfurt
+    plan: starter
+    rootDir: backend
+    schedule: "0 3 * * *"
+    buildCommand: npm ci && npm run db:generate && npm run build
+    startCommand: npm run twitter
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: proof-of-play-db
+          property: connectionString
+      - key: TWITTER_CLIENT_ID
+        sync: false
+      - key: TWITTER_CLIENT_SECRET
+        sync: false
+      - key: TWITTER_REDIRECT_URI
+        sync: false
+      - key: TOKEN_ENCRYPTION_KEY
+        sync: false
+
+  - type: cron
+    name: proof-of-play-weekly-snapshot
+    runtime: node
+    region: frankfurt
+    plan: starter
+    rootDir: backend
+    schedule: "30 0 * * 1"
+    buildCommand: npm ci && npm run db:generate && npm run build
+    startCommand: npm run snapshot
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: proof-of-play-db
+          property: connectionString
+      - key: MONAD_RPC_URL
+        value: https://testnet-rpc.monad.xyz
+      - key: MONAD_CHAIN_ID
+        value: "10143"
+      - key: TWITTER_CLIENT_ID
+        sync: false
+      - key: TWITTER_CLIENT_SECRET
+        sync: false
+      - key: TWITTER_REDIRECT_URI
+        sync: false
+      - key: TOKEN_ENCRYPTION_KEY
+        sync: false
+      - key: PINATA_JWT
+        sync: false
+      - key: PUBLISH_ROOT
+        value: "true"
+      - key: ELIGIBILITY_REGISTRY_ADDRESS
+        sync: false
+      - key: REGISTRY_PUBLISHER_PRIVATE_KEY
+        sync: false
+
+  - type: cron
+    name: proof-of-play-winner-sync
+    runtime: node
+    region: frankfurt
+    plan: starter
+    rootDir: backend
+    schedule: "*/10 * * * *"
+    buildCommand: npm ci && npm run db:generate && npm run build
+    startCommand: npm run sync:winners
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: proof-of-play-db
+          property: connectionString
+      - key: MONAD_RPC_URL
+        value: https://testnet-rpc.monad.xyz
+      - key: RAFFLE_CORE_ADDRESS
+        sync: false
+      - key: RAFFLE_DEPLOYMENT_BLOCK
+        sync: false

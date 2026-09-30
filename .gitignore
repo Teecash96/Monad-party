@@ -1,0 +1,14 @@
+node_modules
+.env
+.env.local
+dist
+.next
+artifacts
+cache
+typechain-types
+coverage
+playwright-report
+test-results
+*.tsbuildinfo
+deployments/*.json
+.DS_Store

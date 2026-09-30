@@ -1,0 +1,33 @@
+{
+  "name": "monad-raffle-contracts",
+  "version": "1.0.0",
+  "description": "Monad Weekly Raffle Smart Contracts",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "preflight:testnet": "EXPECTED_CHAIN_ID=10143 hardhat run scripts/Preflight.ts --network monadTestnet",
+    "preflight:mainnet": "EXPECTED_CHAIN_ID=143 hardhat run scripts/Preflight.ts --network monadMainnet",
+    "deploy:testnet": "hardhat run scripts/Deploy.ts --network monadTestnet",
+    "deploy:mainnet": "hardhat run scripts/Deploy.ts --network monadMainnet",
+    "smoke:entropy:testnet": "hardhat run scripts/EntropySmoke.ts --network monadTestnet",
+    "ownership:testnet": "hardhat run scripts/TransferOwnership.ts --network monadTestnet",
+    "verify": "hardhat verify"
+  },
+  "devDependencies": {
+    "@openzeppelin/merkle-tree": "^1.0.7",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.0",
+    "@openzeppelin/contracts": "^5.1.0",
+    "@pythnetwork/entropy-sdk-solidity": "^2.2.1",
+    "@types/chai": "^4.3.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^20.0.0",
+    "chai": "^4.3.0",
+    "dotenv": "^16.4.0",
+    "hardhat": "^2.22.0",
+    "solidity-coverage": "^0.8.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}
