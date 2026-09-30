@@ -17,8 +17,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Providers>
           <Header />
           {process.env.NEXT_PUBLIC_PREVIEW_MODE === "true" && (
-            <aside role="status" style={{ padding: "12px 24px", background: "#fff3cd", color: "#332701", textAlign: "center" }}>
-              Preview only. Entries, X verification, and prize claims are not live. Party Passport and Game Night are coming next.
+            <aside role="status" className="preview-banner">
+              Preview only. Entries, X verification, and prize claims are not live.
             </aside>
           )}
           <main>{children}</main>

@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("landing page loads its hero and has no horizontal overflow", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Monad Party", level: 1 })).toBeVisible();
-  await expect(page.getByRole("img", { name: "Transparent raffle machine selecting three winning tokens" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Friends celebrating and raising the Monad symbol at a joyful outdoor party" })).toBeVisible();
   const brokenImages = await page.locator("img").evaluateAll((images) =>
     images.filter((image) => !(image as HTMLImageElement).complete || (image as HTMLImageElement).naturalWidth === 0).length,
   );
