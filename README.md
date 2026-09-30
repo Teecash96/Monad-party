@@ -168,7 +168,17 @@ A live end to end result still requires real service credentials, funded Monad d
 
 ## Hosting
 
-`render.yaml` defines native Node web and cron services plus managed PostgreSQL. It does not use Docker. Add every `sync: false` value in Render before expecting `/health/ready` to pass.
+`render.yaml` defines two free native Node web services and free managed PostgreSQL. It does not use Docker. The free database expires after 30 days and the web services can sleep after 15 minutes. Add every `sync: false` value in Render before expecting `/health/ready` to pass.
+
+The hackathon Blueprint does not create cron services. Render charges at least $1 per cron service each month. Run the four jobs manually during the demo, or create paid cron services after you approve billing:
+
+```bash
+cd backend
+npm run indexer
+npm run twitter
+npm run snapshot
+npm run sync:winners
+```
 
 Run local configuration validation with:
 
