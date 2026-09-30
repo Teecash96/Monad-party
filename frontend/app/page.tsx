@@ -12,7 +12,7 @@ export default function HomePage() {
         <div className="hero-shade" />
         <div className="hero-copy">
           <p className="eyebrow">Weekly rewards on Monad</p>
-          <h1>Proof of Play</h1>
+          <h1>Monad Party</h1>
           <p>Three active wallets win every week. The eligibility list is public. The draw is verifiable. The claim stays onchain.</p>
           <div className="hero-actions">
             <Link href="/connect" className="button button-primary">Enter this week <ArrowRight size={17} /></Link>

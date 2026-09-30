@@ -47,6 +47,9 @@ export interface SignedChallenge {
 }
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  if (process.env.NEXT_PUBLIC_PREVIEW_MODE === "true") {
+    throw new Error("Preview only. Live entries and account verification are not available yet.");
+  }
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: { "Content-Type": "application/json", ...options?.headers },
