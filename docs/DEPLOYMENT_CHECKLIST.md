@@ -29,12 +29,15 @@
 
 ## Service gate
 
-1. Database migration succeeds.
-2. `/health` returns 200.
-3. `/health/ready` returns `ready: true` with full config required.
-4. Indexer coverage starts before the first published epoch.
-5. Snapshot storage and IPFS publication succeed.
-6. Frontend chain, addresses, and API URL match the backend.
+1. Choose the free hackathon preview or explicitly approve paid production compute.
+2. Confirm that the free database 30 day expiry is acceptable for the event.
+3. Database migration succeeds.
+4. `/health` returns 200.
+5. `/health/ready` returns `ready: true` with full config required.
+6. Indexer coverage starts before the first published epoch.
+7. Snapshot storage and IPFS publication succeed.
+8. Frontend chain, addresses, and API URL match the backend.
+9. Run indexer, X recheck, snapshot, and winner sync manually unless paid cron services are approved.
 
 ## Evidence gate
 
