@@ -3,7 +3,7 @@ import Link from "next/link";
 export function Footer() {
   return (
     <footer className="site-footer">
-      <p>Proof of Play</p>
+      <p>Monad Party</p>
       <nav aria-label="Legal">
         <Link href="/privacy">Privacy</Link>
         <Link href="/terms">Terms</Link>
