@@ -8,18 +8,20 @@ export default function HomePage() {
   return (
     <>
       <section className="hero">
-        <Image src="/raffle-hero.png" alt="Transparent raffle machine selecting three winning tokens" fill priority sizes="100vw" />
-        <div className="hero-shade" />
+        <Image src="/monad-party-hero.png" alt="Friends celebrating and raising the Monad symbol at a joyful outdoor party" fill priority sizes="100vw" />
         <div className="hero-copy">
-          <p className="eyebrow">Weekly rewards on Monad</p>
+          <p className="eyebrow">Good company. A little luck.</p>
           <h1>Monad Party</h1>
-          <p>Three active wallets win every week. The eligibility list is public. The draw is verifiable. The claim stays onchain.</p>
+          <p>Activity gets you in.<br />Luck picks the winners.</p>
           <div className="hero-actions">
-            <Link href="/connect" className="button button-primary">Enter this week <ArrowRight size={17} /></Link>
-            <Link href="/history" className="button button-quiet">Review past draws</Link>
+            <Link href="/connect" className="button button-primary">Join the party <ArrowRight size={17} /></Link>
+            <Link href="/history" className="button button-quiet">Past draws</Link>
           </div>
-          <Countdown />
         </div>
+      </section>
+      <section className="draw-band" aria-label="Weekly draw schedule">
+        <div><p className="eyebrow">Your weekly reason to show up</p><h2>Same community. New chances.</h2></div>
+        <div><p className="draw-label">Next weekly boundary / UTC</p><Countdown /></div>
       </section>
 
       <OnchainSummary />
