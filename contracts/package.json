@@ -10,6 +10,7 @@
     "preflight:mainnet": "EXPECTED_CHAIN_ID=143 hardhat run scripts/Preflight.ts --network monadMainnet",
     "deploy:testnet": "hardhat run scripts/Deploy.ts --network monadTestnet",
     "deploy:mainnet": "hardhat run scripts/Deploy.ts --network monadMainnet",
+    "publish:challenge:testnet": "hardhat run scripts/PublishDailyChallenge.ts --network monadTestnet",
     "smoke:entropy:testnet": "hardhat run scripts/EntropySmoke.ts --network monadTestnet",
     "ownership:testnet": "hardhat run scripts/TransferOwnership.ts --network monadTestnet",
     "verify": "hardhat verify"

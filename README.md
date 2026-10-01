@@ -130,6 +130,16 @@ The script deploys `EligibilityRegistry`, `PythEntropyCoordinator`, `VRFWrapper`
 
 ## Weekly operations
 
+### Publish a daily party challenge
+
+Set `PARTY_GAME_ADDRESS`, `PARTY_CHALLENGE_ANSWER`, and `PARTY_CHALLENGE_SALT` in `contracts/.env`. The answer and salt can be plain text or 32 byte hex values. Set `PARTY_CHALLENGE_DAY` only when publishing a future UTC day. Review the printed chain ID and answer commitment, then run:
+
+```bash
+CONFIRM_PARTY_CHALLENGE_CHAIN_ID=10143 npm run publish:challenge:testnet
+```
+
+The script refuses the wrong chain, a nonowner signer, a past day, or a day that already has a challenge.
+
 1. Run the indexer at least hourly.
 
 ```bash
