@@ -1,18 +1,25 @@
-import { Block, JsonRpcProvider, TransactionResponse } from "ethers";
+import { Block, JsonRpcProvider } from "ethers";
 import { Prisma } from "@prisma/client";
 import { prisma } from "../db/pool";
 import { epochIdAt } from "../domain/epoch";
+import { gameEvents, parseMilestoneLog, partyRules } from "../domain/party";
 
 const CONFIRMATIONS = Number(process.env.INDEXER_CONFIRMATIONS || 20);
+const BLOCK_BATCH = Number(process.env.INDEXER_BLOCK_BATCH || 100);
 const REORG_REWIND_BLOCKS = 128;
+const milestoneTopic = gameEvents.getEvent("MilestoneCompleted")!.topicHash;
 
-export interface IndexedTx {
-  hash: string;
-  blockNumber: number;
-  blockHash: string;
+export interface IndexedPartyStamp {
+  id: string;
+  partyId: string;
   walletAddress: string;
   epochId: bigint;
-  gasSpentWei: bigint;
+  blockNumber: number;
+  blockHash: string;
+  txHash: string;
+  logIndex: number;
+  milestone: bigint;
+  completedAt: number;
 }
 
 export class MonadIndexer {
@@ -27,70 +34,69 @@ export class MonadIndexer {
     this.chainId = chainId;
   }
 
-  async processBlock(blockNumber: number): Promise<{ block: Block; transactions: IndexedTx[] }> {
-    const block = await this.provider.getBlock(blockNumber, true);
-    if (!block) throw new Error(`Block ${blockNumber} was not found`);
-    const transactions: IndexedTx[] = [];
-
-    for (const transaction of block.prefetchedTransactions) {
-      const tx = transaction as TransactionResponse;
-      const receipt = await this.provider.getTransactionReceipt(tx.hash);
-      if (!receipt || receipt.status !== 1) continue;
-      if (tx.to && tx.from.toLowerCase() === tx.to.toLowerCase() && tx.value === 0n) continue;
-
-      const gasPrice = receipt.gasPrice || tx.gasPrice || 0n;
-      const gasSpentWei = receipt.gasUsed * gasPrice;
-      transactions.push({
-        hash: tx.hash,
-        blockNumber,
-        blockHash: block.hash || receipt.blockHash,
-        walletAddress: tx.from.toLowerCase(),
+  async processRange(fromBlock: number, toBlock: number): Promise<{ firstBlock: Block; lastBlock: Block; stamps: IndexedPartyStamp[] }> {
+    const rules = partyRules();
+    if (!rules) throw new Error("Party game is not configured");
+    const logs = await this.provider.getLogs({
+      address: rules.gameAddress,
+      topics: [milestoneTopic],
+      fromBlock,
+      toBlock,
+    });
+    const requiredBlocks = [...new Set([fromBlock, toBlock, ...logs.map((log) => log.blockNumber)])];
+    const blocks = await Promise.all(requiredBlocks.map(async (number) => {
+      const block = await this.provider.getBlock(number);
+      if (!block) throw new Error(`Block ${number} was not found`);
+      return block;
+    }));
+    const byNumber = new Map(blocks.map((block) => [block.number, block]));
+    const stamps = logs.flatMap((log) => {
+      const milestone = parseMilestoneLog(log, rules);
+      const block = byNumber.get(log.blockNumber);
+      if (!milestone || !block) return [];
+      return [{
+        id: `${log.transactionHash}:${log.index}`,
+        partyId: rules.id,
+        walletAddress: milestone.player,
         epochId: epochIdAt(block.timestamp),
-        gasSpentWei,
-      });
-    }
-    return { block, transactions };
+        blockNumber: log.blockNumber,
+        blockHash: log.blockHash,
+        txHash: log.transactionHash,
+        logIndex: log.index,
+        milestone: milestone.milestone,
+        completedAt: block.timestamp,
+      }];
+    });
+    return { firstBlock: byNumber.get(fromBlock)!, lastBlock: byNumber.get(toBlock)!, stamps };
   }
 
-  async saveBlock(block: Block, transactions: IndexedTx[]): Promise<void> {
+  async saveRange(firstBlock: Block, lastBlock: Block, stamps: IndexedPartyStamp[]): Promise<void> {
+    const rules = partyRules();
+    if (!rules) throw new Error("Party game is not configured");
     await prisma.$transaction(async (tx) => {
-      for (const transaction of transactions) {
-        const exists = await tx.indexedTransaction.findUnique({ where: { hash: transaction.hash }, select: { hash: true } });
-        if (exists) continue;
-        await tx.indexedTransaction.create({
-          data: {
-            ...transaction,
-            gasSpentWei: new Prisma.Decimal(transaction.gasSpentWei.toString()),
-          },
-        });
-        await tx.txActivity.upsert({
-          where: { walletAddress_epochId: { walletAddress: transaction.walletAddress, epochId: transaction.epochId } },
-          update: {
-            txCount: { increment: 1 },
-            gasSpentWei: { increment: new Prisma.Decimal(transaction.gasSpentWei.toString()) },
-          },
-          create: {
-            walletAddress: transaction.walletAddress,
-            epochId: transaction.epochId,
-            txCount: 1,
-            gasSpentWei: new Prisma.Decimal(transaction.gasSpentWei.toString()),
-          },
+      for (const stamp of stamps) {
+        await tx.partyStamp.upsert({
+          where: { id: stamp.id },
+          update: {},
+          create: { ...stamp, milestone: new Prisma.Decimal(stamp.milestone.toString()) },
         });
       }
       await tx.indexerCursor.upsert({
         where: { chainId: this.chainId },
         update: {
-          lastBlockNumber: block.number,
-          lastBlockHash: block.hash || "",
-          lastBlockTimestamp: block.timestamp,
+          partyRuleId: rules.id,
+          lastBlockNumber: lastBlock.number,
+          lastBlockHash: lastBlock.hash || "",
+          lastBlockTimestamp: lastBlock.timestamp,
         },
         create: {
           chainId: this.chainId,
-          firstBlockNumber: block.number,
-          firstBlockTimestamp: block.timestamp,
-          lastBlockNumber: block.number,
-          lastBlockHash: block.hash || "",
-          lastBlockTimestamp: block.timestamp,
+          partyRuleId: rules.id,
+          firstBlockNumber: firstBlock.number,
+          firstBlockTimestamp: firstBlock.timestamp,
+          lastBlockNumber: lastBlock.number,
+          lastBlockHash: lastBlock.hash || "",
+          lastBlockTimestamp: lastBlock.timestamp,
         },
       });
     });
@@ -103,32 +109,8 @@ export class MonadIndexer {
     if (canonical?.hash === cursor.lastBlockHash) return;
 
     const rewind = Math.max(0, cursor.lastBlockNumber - REORG_REWIND_BLOCKS);
-    const affected = await prisma.indexedTransaction.findMany({
-      where: { blockNumber: { gte: rewind } },
-      select: { epochId: true },
-      distinct: ["epochId"],
-    });
     await prisma.$transaction(async (tx) => {
-      await tx.indexedTransaction.deleteMany({ where: { blockNumber: { gte: rewind } } });
-      for (const { epochId } of affected) {
-        await tx.txActivity.deleteMany({ where: { epochId } });
-        const grouped = await tx.indexedTransaction.groupBy({
-          by: ["epochId", "walletAddress"],
-          where: { epochId },
-          _count: { hash: true },
-          _sum: { gasSpentWei: true },
-        });
-        for (const row of grouped) {
-          await tx.txActivity.create({
-            data: {
-              epochId: row.epochId,
-              walletAddress: row.walletAddress,
-              txCount: row._count.hash,
-              gasSpentWei: row._sum.gasSpentWei || new Prisma.Decimal(0),
-            },
-          });
-        }
-      }
+      await tx.partyStamp.deleteMany({ where: { blockNumber: { gte: rewind } } });
       if (rewind === 0) {
         await tx.indexerCursor.delete({ where: { chainId: this.chainId } });
       } else {
@@ -147,6 +129,15 @@ export class MonadIndexer {
   }
 
   async run(): Promise<void> {
+    const rules = partyRules();
+    if (!rules) throw new Error("PARTY_GAME_ADDRESS and PARTY_GAME_URL are required before indexing party activity");
+    if (!Number.isSafeInteger(BLOCK_BATCH) || BLOCK_BATCH < 1 || BLOCK_BATCH > 100) {
+      throw new Error("INDEXER_BLOCK_BATCH must be an integer from 1 through 100");
+    }
+    const existingCursor = await prisma.indexerCursor.findUnique({ where: { chainId: this.chainId } });
+    if (existingCursor && existingCursor.partyRuleId !== rules.id) {
+      throw new Error("Party rules changed. Start with a fresh database and reindex from the epoch start");
+    }
     await this.repairReorg();
     const latest = await this.provider.getBlockNumber();
     const target = latest - CONFIRMATIONS;
@@ -159,10 +150,12 @@ export class MonadIndexer {
     if (!cursor && (!Number.isSafeInteger(configuredStart) || configuredStart < 0)) {
       throw new Error("INDEXER_START_BLOCK must be a nonnegative integer");
     }
-    const start = cursor ? cursor.lastBlockNumber + 1 : Math.max(0, configuredStart);
-    for (let blockNumber = start; blockNumber <= target; blockNumber++) {
-      const { block, transactions } = await this.processBlock(blockNumber);
-      await this.saveBlock(block, transactions);
+    let start = cursor ? cursor.lastBlockNumber + 1 : Math.max(0, configuredStart);
+    while (start <= target) {
+      const end = Math.min(target, start + BLOCK_BATCH - 1);
+      const { firstBlock, lastBlock, stamps } = await this.processRange(start, end);
+      await this.saveRange(firstBlock, lastBlock, stamps);
+      start = end + 1;
     }
   }
 }

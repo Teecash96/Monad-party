@@ -6,20 +6,35 @@ const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 export interface Eligibility {
   epochId: string;
   eligible: boolean;
-  txCount: number;
-  gasSpentWei: string;
+  party: {
+    configured: boolean;
+    id: string | null;
+    gameAddress: string | null;
+    gameUrl: string | null;
+    minimumMilestone: string | null;
+  };
+  milestoneComplete: boolean;
+  returnComplete: boolean;
+  activeDays: number;
+  days: string[];
   twitterConnected: boolean;
   twitterFresh: boolean;
   twitterUsername: string | null;
-  twitterFollowers: number;
-  needsTx: number;
-  needsFollowers: number;
+}
+
+export interface Party {
+  epochId: string;
+  configured: boolean;
+  id: string | null;
+  gameAddress: string | null;
+  gameUrl: string | null;
+  minimumMilestone: string | null;
+  requirements: string[];
 }
 
 export interface TwitterStatus {
   connected: boolean;
   username: string | null;
-  followersCount: number;
   fresh: boolean;
   eligible: boolean;
   verifiedAt: string | null;
@@ -64,6 +79,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  party: () => request<Party>("/api/party/current"),
   eligibility: (address: string, epochId?: string) =>
     request<Eligibility>(`/api/eligibility/${address}${epochId ? `?epochId=${epochId}` : ""}`),
   twitterStatus: (address: string) => request<TwitterStatus>(`/api/twitter/status/${address}`),

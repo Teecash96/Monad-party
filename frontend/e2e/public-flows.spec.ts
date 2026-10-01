@@ -27,3 +27,11 @@ test("privacy and deletion instructions are public", async ({ page }) => {
   await page.getByRole("link", { name: "Terms" }).click();
   await expect(page.getByRole("heading", { name: "Terms of service" })).toBeVisible();
 });
+
+test("party passport explains the weekly entry path", async ({ page }) => {
+  await page.goto("/passport");
+  await expect(page.getByRole("heading", { name: "Game Night Passport" })).toBeVisible();
+  await expect(page.getByText("Complete the featured game milestone on two different UTC days")).toBeVisible();
+  await expect(page.getByText("Partner game pending")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+});

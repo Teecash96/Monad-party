@@ -2,15 +2,15 @@
 
 ## 0:00 to 0:25
 
-Open the landing page. State the rule in one sentence: three Monad transactions, 0.001 MON in gas, and an X account with 100 followers.
+Open the landing page. State the rule in one sentence: complete the featured game milestone on two different UTC days and connect X.
 
 Show the live countdown and current pool.
 
 ## 0:25 to 0:55
 
-Open Connect. Connect the demo wallet. Click Connect X. Sign the ownership message. Complete OAuth and return to the app.
+Open Passport. Connect the demo wallet. Show the first game stamp and the return day stamp. Open Connect, link X, sign the ownership message, complete OAuth, and return to the app.
 
-Open Eligibility. Show all three checks.
+Return to Passport. Show the completed game milestone, second active day, current X verification, and unlocked weekly entry.
 
 ## 0:55 to 1:30
 
@@ -34,4 +34,4 @@ Show the confirmed transfer. Then show that a second claim or a proof from anoth
 
 Open Winner History. Show the root, eligible count, winners, and claim status.
 
-Close with the core value: active community behavior becomes a public, repeatable, sponsor funded reward loop.
+Close with the core value: repeat play becomes a public, verifiable, sponsor funded reward loop.

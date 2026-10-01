@@ -11,8 +11,8 @@ export default function ConnectPage() {
     <div className="page-shell narrow">
       <div className="page-heading">
         <p className="eyebrow">Entry setup</p>
-        <h1>Connect both accounts</h1>
-        <p>Your wallet signature proves ownership. OAuth lets the backend read your current follower count. The app never asks for posting access.</p>
+        <h1>Connect wallet and X</h1>
+        <p>Your wallet signature proves ownership. OAuth confirms the X account linked to your passport. The app never asks for posting access.</p>
       </div>
       <section className="setup-list">
         <div className="setup-row">
@@ -22,7 +22,7 @@ export default function ConnectPage() {
         </div>
         <div className="setup-row">
           <span className="step-icon">@</span>
-          <div><h2>X account</h2><p>Requires at least 100 followers when the weekly snapshot is taken.</p></div>
+          <div><h2>X account</h2><p>Connect one X account to complete your weekly passport.</p></div>
           <ConnectTwitter />
         </div>
       </section>

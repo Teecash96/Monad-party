@@ -43,13 +43,14 @@ CONFIRM_DEPLOY_CHAIN_ID=10143 npm run deploy:testnet
 ## First epoch
 
 1. Set `INDEXER_START_BLOCK` at or before the epoch start.
-2. Run the indexer and confirm full epoch coverage.
-3. Connect three real test wallets and three real X accounts.
-4. Complete at least three successful transactions and the gas threshold for each wallet.
-5. Run the weekly snapshot after the epoch closes and the indexer confirms the final blocks. The hosted schedule is Monday 00:30 UTC.
-6. Fund the epoch with a small test amount.
-7. Request the draw after the five minute delay.
-8. Confirm the Entropy callback, three distinct winners, one successful claim, and one rejected duplicate claim.
+2. Set `PARTY_GAME_ADDRESS`, `PARTY_GAME_URL`, and `PARTY_MINIMUM_MILESTONE` to the verified partner game values.
+3. Run the indexer and confirm full epoch coverage.
+4. Connect three real test wallets and three real X accounts.
+5. Complete the configured game milestone on two different UTC days with each wallet.
+6. Run the weekly snapshot after the epoch closes and the indexer confirms the final blocks. The hosted schedule is Monday 00:30 UTC.
+7. Fund the epoch with a small test amount.
+8. Request the draw after the five minute delay.
+9. Confirm the Entropy callback, three distinct winners, one successful claim, and one rejected duplicate claim.
 
 ## Stop conditions
 

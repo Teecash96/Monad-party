@@ -49,9 +49,8 @@ twitterRouter.get("/status/:address", asyncRoute(async (request, response) => {
   response.json({
     connected,
     username: connected ? verification!.username : null,
-    followersCount: connected ? verification!.followersCount : 0,
     fresh,
-    eligible: fresh && verification!.followersCount >= 100,
+    eligible: fresh,
     verifiedAt: connected ? verification!.verifiedAt : null,
   });
 }));

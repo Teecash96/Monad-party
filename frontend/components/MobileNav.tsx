@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Gift, History, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import { Gift, History, Stamp, SlidersHorizontal } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const links = [
-  ["Check", "/eligibility", ShieldCheck],
+  ["Passport", "/passport", Stamp],
   ["Winners", "/history", History],
   ["Claim", "/claim", Gift],
   ["Admin", "/admin", SlidersHorizontal],

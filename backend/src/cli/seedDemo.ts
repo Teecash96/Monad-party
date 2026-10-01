@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { buildSnapshot } from "../aggregator/build";
 import { prisma } from "../db/pool";
 import { epochIdAt, epochRange } from "../domain/epoch";
+import { partyRules } from "../domain/party";
 
 const wallets = [
   "0x1111111111111111111111111111111111111111",
@@ -21,6 +22,8 @@ async function main() {
   if (completedEpoch < 0n) throw new Error("No completed epoch is available");
   const range = epochRange(completedEpoch);
   const chainId = Number(process.env.MONAD_CHAIN_ID || 10143);
+  const rules = partyRules();
+  if (!rules) throw new Error("PARTY_GAME_ADDRESS and PARTY_GAME_URL are required for demo seeding");
 
   await prisma.$transaction(async (tx) => {
     await tx.winner.deleteMany({ where: { epochId: completedEpoch } });
@@ -33,9 +36,11 @@ async function main() {
         lastBlockNumber: 2,
         lastBlockHash: `0x${"ab".repeat(32)}`,
         lastBlockTimestamp: range.end,
+        partyRuleId: rules.id,
       },
       create: {
         chainId,
+        partyRuleId: rules.id,
         firstBlockNumber: 1,
         firstBlockTimestamp: range.start,
         lastBlockNumber: 2,
@@ -56,11 +61,23 @@ async function main() {
           verifiedAt: new Date(),
         },
       });
-      for (const epochId of [completedEpoch, currentEpoch]) {
-        await tx.txActivity.upsert({
-          where: { walletAddress_epochId: { walletAddress, epochId } },
-          update: { txCount: 3 + index, gasSpentWei: new Prisma.Decimal("1000000000000000") },
-          create: { walletAddress, epochId, txCount: 3 + index, gasSpentWei: new Prisma.Decimal("1000000000000000") },
+      for (const [stampIndex, completedAt] of [range.start + 3600, range.start + 90000].entries()) {
+        const txHash = `0x${(index * 2 + stampIndex + 1).toString(16).padStart(64, "0")}`;
+        await tx.partyStamp.upsert({
+          where: { id: `${txHash}:0` },
+          update: {},
+          create: {
+            id: `${txHash}:0`,
+            partyId: rules.id,
+            walletAddress,
+            epochId: completedEpoch,
+            blockNumber: stampIndex + 1,
+            blockHash: `0x${(index + 100).toString(16).padStart(64, "0")}`,
+            txHash,
+            logIndex: 0,
+            milestone: new Prisma.Decimal(rules.minimumMilestone),
+            completedAt,
+          },
         });
       }
     }

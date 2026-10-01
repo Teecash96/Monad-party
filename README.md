@@ -1,6 +1,6 @@
-# Proof of Play
+# Monad Party
 
-Proof of Play is a weekly raffle for active Monad wallets. A wallet must complete at least three successful top level transactions in one UTC week, spend at least 0.001 MON on gas, and link an X account with at least 100 followers.
+Monad Party is a weekly Game Night Passport and prize draw. A wallet must complete the verified milestone in the featured Monad game on two different UTC days in one weekly epoch and link a current X account. One completed passport creates one entry.
 
 Three unique winner positions receive 50 percent, 30 percent, and 20 percent of the funded pool.
 
@@ -10,8 +10,8 @@ Three unique winner positions receive 50 percent, 30 percent, and 20 percent of 
 | --- | --- |
 | Solidity contracts | Immutable weekly roots, Pyth Entropy request flow, winner indexes, claims, pause, and rollover |
 | Node API | Wallet signed X OAuth, eligibility status, proof delivery, audit data, and history |
-| Indexer | Confirmed Monad transaction counting with transaction deduplication and reorg repair |
-| Aggregator | AND eligibility join, indexed Merkle tree, optional IPFS upload, and root publication |
+| Indexer | Batched partner game event indexing with log deduplication and reorg repair |
+| Aggregator | Passport and X verification join, indexed Merkle tree, optional IPFS upload, and root publication |
 | Next app | Wallet connect, X connect, eligibility, history, claim, and owner controls |
 | PostgreSQL | OAuth state, encrypted tokens, indexed transactions, snapshots, winners, and audit events |
 
@@ -27,7 +27,7 @@ This binds each claimant to the exact position selected by randomness. An eligib
 
 Chainlink does not document VRF support for Monad. The production path uses Pyth Entropy through `PythEntropyCoordinator`. The adapter expands one verified Entropy result into three deterministic words and supports retry when downstream delivery fails.
 
-Internal contract calls do not count as wallet activity. They are not wallet signed transactions and would create an easy eligibility abuse path.
+Only `MilestoneCompleted(address,uint256)` events from the configured game contract count. Generic wallet transactions do not create stamps. The partner game must emit the event only after a meaningful gameplay milestone.
 
 The hackathon contract accepts native MON only. Supporting arbitrary ERC20 tokens would require a token allowlist and accounting rules for fee charging and rebasing tokens. That is outside the safe MVP scope.
 
@@ -47,6 +47,10 @@ openssl rand -base64 32
 ```
 
 Put the generated value in `TOKEN_ENCRYPTION_KEY`. Add your X OAuth app values. Keep all private keys out of Git.
+
+Set `PARTY_GAME_ADDRESS` to the verified partner game contract and `PARTY_GAME_URL` to its HTTPS play URL. Set `PARTY_MINIMUM_MILESTONE` to the first milestone that earns a stamp. Changing these rules requires a fresh database and a reindex from the epoch start.
+
+`INDEXER_BLOCK_BATCH` must stay at 100 or lower because the Monad testnet RPC limits each log query to 100 blocks.
 
 Set `INDEXER_START_BLOCK` to a confirmed block at or before the start of the first epoch you will publish. The snapshot job refuses to create a root unless the indexer proves full confirmed coverage from the epoch start through the epoch end.
 
@@ -157,14 +161,14 @@ The repository currently passes:
 
 ```text
 Contracts: 13 tests
-Backend: TypeScript build and 5 unit tests
+Backend: TypeScript build and unit tests
 Frontend: TypeScript check and production build
 Browser: 6 Playwright checks across desktop and mobile
 Frontend production dependency audit: 0 vulnerabilities
 Backend production dependency audit: 0 vulnerabilities
 ```
 
-A live end to end result still requires real service credentials, funded Monad deployment transactions, an X developer app, PostgreSQL, and optional Pinata access. Those are external secrets and paid or authorized actions, so they are not included in this repository.
+A live end to end result still requires a verified partner game contract, real service credentials, funded Monad deployment transactions, an X developer app, PostgreSQL, and optional Pinata access. Those are external secrets and paid or authorized actions, so they are not included in this repository.
 
 ## Hosting
 

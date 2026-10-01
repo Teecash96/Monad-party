@@ -1,8 +1,8 @@
-# Proof of Play
+# Monad Party
 
 ## One line
 
-Proof of Play turns verified weekly Monad activity and a real social identity into a transparent sponsor funded raffle.
+Monad Party turns repeat play in a featured Monad game and a verified social connection into a transparent sponsor funded draw.
 
 ## Problem
 
@@ -10,11 +10,11 @@ Web3 communities often reward noise, bots, and one time campaigns. Sponsors cann
 
 ## Solution
 
-A wallet qualifies after three successful Monad transactions, at least 0.001 MON in gas, and an X account with at least 100 followers. The backend publishes an auditable Merkle snapshot. Pyth Entropy selects three distinct positions. Winners claim 50, 30, and 20 percent onchain.
+A wallet qualifies after it completes a verified game milestone on two different UTC days in one weekly epoch and connects a current X account. The backend publishes an auditable Merkle snapshot. Pyth Entropy selects three distinct positions. Winners claim 50, 30, and 20 percent onchain.
 
 ## Social track fit
 
-The product joins social identity, repeat network activity, sponsor incentives, and public proof. X data stays private. Only eligible wallet positions and proofs become public.
+The product joins social identity, repeat game participation, sponsor incentives, and public proof. X data stays private. Only eligible wallet positions and proofs become public.
 
 ## Technology
 
@@ -41,3 +41,4 @@ The product joins social identity, repeat network activity, sponsor incentives, 
 4. Three distinct winner indexes.
 5. Successful winner claim and rejected duplicate claim.
 6. X connect and disconnect flow with no social data in the public snapshot.
+7. Two confirmed `MilestoneCompleted` events for one wallet on different UTC days.

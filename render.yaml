@@ -27,10 +27,16 @@ services:
         value: https://testnet-rpc.monad.xyz
       - key: MONAD_CHAIN_ID
         value: "10143"
+      - key: PARTY_GAME_ADDRESS
+        sync: false
+      - key: PARTY_GAME_URL
+        sync: false
+      - key: PARTY_MINIMUM_MILESTONE
+        value: "1"
       - key: REQUIRE_FULL_CONFIG
         value: "true"
       - key: REQUIRED_FEATURES
-        value: network,twitter,contracts
+        value: network,twitter,contracts,party,indexing,publishing
       - key: PUBLISH_ROOT
         value: "true"
       - key: FRONTEND_URL

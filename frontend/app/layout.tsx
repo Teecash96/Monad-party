@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Monad Party | Weekly draws",
-  description: "A verifiable weekly raffle for active Monad wallets and real social accounts.",
+  description: "A verifiable weekly draw for repeat play in featured Monad games.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

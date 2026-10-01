@@ -1,12 +1,6 @@
 export interface TwitterProfile {
   id: string;
   username: string;
-  public_metrics: {
-    followers_count: number;
-    following_count: number;
-    tweet_count: number;
-    listed_count: number;
-  };
 }
 
 export class TwitterApiError extends Error {
@@ -16,7 +10,7 @@ export class TwitterApiError extends Error {
 }
 
 export async function getTwitterProfile(accessToken: string): Promise<TwitterProfile> {
-  const response = await fetch("https://api.x.com/2/users/me?user.fields=public_metrics", {
+  const response = await fetch("https://api.x.com/2/users/me", {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
   if (!response.ok) {

@@ -6,10 +6,10 @@ import type { Eligibility } from "@/lib/api";
 
 export function EligibilityCard({ value }: { value: Eligibility }) {
   const rows = [
-    { label: "Monad transactions", value: `${value.txCount} of 3`, pass: value.txCount >= 3 },
-    { label: "Gas spent", value: `${value.gasSpentWei} wei`, pass: BigInt(value.gasSpentWei) >= BigInt("1000000000000000") },
-    { label: "X followers", value: `${value.twitterFollowers} of 100`, pass: value.twitterConnected && value.twitterFollowers >= 100 },
-    { label: "X check", value: value.twitterFresh ? "Fresh" : "Needs refresh", pass: value.twitterFresh },
+    { label: "Game milestone", value: value.milestoneComplete ? "Stamped" : "Not completed", pass: value.milestoneComplete },
+    { label: "Second active day", value: value.returnComplete ? "Stamped" : `${value.activeDays} of 2 days`, pass: value.returnComplete },
+    { label: "X connection", value: value.twitterFresh ? `@${value.twitterUsername}` : "Needs connection", pass: value.twitterFresh },
+    { label: "Weekly entry", value: value.eligible ? "Unlocked" : "Locked", pass: value.eligible },
   ];
   return (
     <section className="status-panel">
@@ -23,6 +23,7 @@ export function EligibilityCard({ value }: { value: Eligibility }) {
         ))}
       </div>
       {!value.twitterConnected && <Link href="/connect" className="text-link">Connect X <ExternalLink size={15} /></Link>}
+      {value.party.gameUrl && !value.returnComplete && <a href={value.party.gameUrl} target="_blank" rel="noreferrer" className="text-link">Play the featured game <ExternalLink size={15} /></a>}
     </section>
   );
 }

@@ -1,4 +1,4 @@
-export const metadata = { title: "Privacy | Proof of Play" };
+export const metadata = { title: "Privacy | Monad Party" };
 
 const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL;
 
@@ -8,12 +8,12 @@ export default function PrivacyPage() {
       <div className="page-heading">
         <p className="eyebrow">Effective 29 September 2026</p>
         <h1>Privacy policy</h1>
-        <p>This policy explains how Proof of Play uses wallet and X account data for raffle eligibility.</p>
+        <p>This policy explains how Monad Party uses wallet and X account data for draw eligibility.</p>
       </div>
 
       <section>
         <h2>Data we collect</h2>
-        <p>We store your wallet address, X user ID, X username, follower count, verification times, encrypted OAuth tokens, transaction activity totals, eligibility records, and prize records.</p>
+        <p>We store your wallet address, X user ID, X username, verification times, encrypted OAuth tokens, verified game milestone events, eligibility records, and prize records.</p>
       </section>
       <section>
         <h2>Why we use it</h2>
@@ -21,7 +21,7 @@ export default function PrivacyPage() {
       </section>
       <section>
         <h2>Public data</h2>
-        <p>Eligible wallet addresses, entry indexes, proofs, roots, winners, and claims can be public on Monad or IPFS. We do not put your X ID, username, follower count, or OAuth tokens in the public snapshot.</p>
+        <p>Eligible wallet addresses, entry indexes, proofs, roots, winners, and claims can be public on Monad or IPFS. We do not put your X ID, username, or OAuth tokens in the public snapshot.</p>
       </section>
       <section>
         <h2>Storage and security</h2>

@@ -1,4 +1,4 @@
-export const metadata = { title: "Terms | Proof of Play" };
+export const metadata = { title: "Terms | Monad Party" };
 
 const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL;
 
@@ -8,16 +8,16 @@ export default function TermsPage() {
       <div className="page-heading">
         <p className="eyebrow">Effective 29 September 2026</p>
         <h1>Terms of service</h1>
-        <p>Proof of Play is experimental hackathon software. Use it only if you understand blockchain risk.</p>
+        <p>Monad Party is experimental hackathon software. Use it only if you understand blockchain risk.</p>
       </div>
 
       <section>
         <h2>Eligibility</h2>
-        <p>You must control the wallet and X account that you connect. You must complete at least three successful Monad transactions in the weekly epoch, spend the published minimum gas amount, and have at least 100 X followers when the final snapshot runs.</p>
+        <p>You must control the wallet and X account that you connect. You must complete the featured game milestone on two different UTC days in the same weekly epoch. Your X verification must be current when the final snapshot runs.</p>
       </section>
       <section>
         <h2>Fair use</h2>
-        <p>Do not use bought accounts, fake followers, identity resale, Sybil methods, or transaction manipulation. We can exclude abusive entries when the published rules permit it.</p>
+        <p>Do not use bought accounts, identity resale, Sybil methods, game exploits, or transaction manipulation. We can exclude abusive entries when the published rules permit it.</p>
       </section>
       <section>
         <h2>Draws and prizes</h2>

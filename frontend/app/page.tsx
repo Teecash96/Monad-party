@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Dice5, ShieldCheck } from "lucide-react";
+import { ArrowRight, CalendarCheck, Gamepad2, ShieldCheck } from "lucide-react";
 import { Countdown } from "@/components/Countdown";
 import { OnchainSummary } from "@/components/OnchainSummary";
 
@@ -12,9 +12,9 @@ export default function HomePage() {
         <div className="hero-copy">
           <p className="eyebrow">Good company. A little luck.</p>
           <h1>Monad Party</h1>
-          <p>Activity gets you in.<br />Luck picks the winners.</p>
+          <p>Play earns your entry.<br />Luck picks the winners.</p>
           <div className="hero-actions">
-            <Link href="/connect" className="button button-primary">Join the party <ArrowRight size={17} /></Link>
+            <Link href="/passport" className="button button-primary">Join the party <ArrowRight size={17} /></Link>
             <Link href="/history" className="button button-quiet">Past draws</Link>
           </div>
         </div>
@@ -27,11 +27,11 @@ export default function HomePage() {
       <OnchainSummary />
 
       <section className="content-band">
-        <div className="section-heading"><p className="eyebrow">How entry works</p><h2>Activity plus identity. Both are required.</h2></div>
+        <div className="section-heading"><p className="eyebrow">How entry works</p><h2>Play. Come back. Join the draw.</h2></div>
         <div className="steps-grid">
-          <article><span>01</span><Dice5 /><h3>Use Monad</h3><p>Send at least three successful transactions in the Monday to Sunday UTC epoch and spend at least 0.001 MON on gas.</p></article>
-          <article><span>02</span><ShieldCheck /><h3>Verify your X account</h3><p>Sign a wallet ownership message, connect X through OAuth, and keep at least 100 followers at snapshot time.</p></article>
-          <article><span>03</span><CheckCircle2 /><h3>Claim if selected</h3><p>Your wallet proves its exact position in the weekly Merkle snapshot. Only the selected index can claim its assigned prize.</p></article>
+          <article><span>01</span><Gamepad2 /><h3>Earn a stamp</h3><p>Complete the verified milestone in this week&apos;s featured Monad game.</p></article>
+          <article><span>02</span><CalendarCheck /><h3>Come back</h3><p>Return on another UTC day and complete the milestone again.</p></article>
+          <article><span>03</span><ShieldCheck /><h3>Complete your passport</h3><p>Connect X to unlock one entry in the sponsor funded weekly draw.</p></article>
         </div>
       </section>
     </>

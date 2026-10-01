@@ -71,8 +71,26 @@ model IndexedTransaction {
   @@index([epochId, walletAddress])
 }
 
+model PartyStamp {
+  id            String  @id @db.VarChar(80)
+  partyId       String  @db.Char(66)
+  walletAddress String  @db.VarChar(42)
+  epochId       BigInt
+  blockNumber   Int
+  blockHash     String  @db.Char(66)
+  txHash        String  @db.Char(66)
+  logIndex      Int
+  milestone     Decimal @db.Decimal(78, 0)
+  completedAt   Int
+
+  @@unique([partyId, txHash, logIndex])
+  @@index([partyId, epochId, walletAddress])
+  @@index([blockNumber])
+}
+
 model IndexerCursor {
   chainId            Int      @id
+  partyRuleId        String?  @db.Char(66)
   firstBlockNumber   Int
   firstBlockTimestamp Int
   lastBlockNumber    Int

@@ -2,11 +2,11 @@
 
 Effective date: 29 September 2026
 
-Proof of Play stores the connected wallet address, X user ID, X username, follower count, encrypted OAuth tokens, verification times, and raffle records.
+Monad Party stores the connected wallet address, X user ID, X username, encrypted OAuth tokens, verification times, verified game milestone events, and raffle records.
 
 The service uses this data only to verify raffle eligibility, process claims, prevent duplicate identity links, and maintain a security audit record.
 
-OAuth tokens are encrypted at rest. Public snapshots include eligible wallet addresses, entry indexes, and Merkle proofs. They do not include X usernames, X user IDs, follower counts, activity totals, or OAuth tokens.
+OAuth tokens are encrypted at rest. Public snapshots include eligible wallet addresses, entry indexes, and Merkle proofs. They do not include X usernames, X user IDs, game activity totals, or OAuth tokens.
 
 Users can disconnect X in the application. The service asks X to revoke the grant and then erases the stored access and refresh tokens. Users can also revoke the app in X account settings.
 

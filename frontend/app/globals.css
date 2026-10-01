@@ -125,6 +125,15 @@ main { min-height: calc(100vh - 68px); }
 .status-heading > svg { color: var(--lime); }
 .status-heading h2 { margin: 0; font-size: 24px; }
 .criteria-list > div { display: flex; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid var(--line); gap: 16px; }
+.passport-track { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); margin-bottom: 24px; }
+.passport-track article { min-height: 230px; padding: 28px; border-right: 1px solid var(--line); position: relative; }
+.passport-track article:last-child { border-right: 0; }
+.passport-track article > span { position: absolute; right: 24px; top: 24px; color: var(--muted); font-size: 12px; text-transform: uppercase; }
+.passport-track svg { color: var(--lime); margin-top: 30px; }
+.passport-track h2 { margin: 20px 0 8px; font-size: 22px; }
+.passport-track p { color: var(--muted); line-height: 1.6; margin: 0; }
+.party-callout { border-left: 3px solid var(--violet); background: #eee9fa; padding: 18px 20px; margin: 20px 0; }
+.party-callout p { color: var(--muted); margin: 6px 0 0; line-height: 1.5; }
 .pass { color: var(--lime); }
 .fail, .form-error { color: var(--coral); }
 .muted { color: var(--muted); line-height: 1.5; }
@@ -179,9 +188,11 @@ td { font-size: 14px; }
   .draw-band h2 { font-size: 22px; }
   .section-heading h2, .page-heading h1 { font-size: 34px; }
   .countdown { grid-template-columns: repeat(4, 1fr); }
-  .summary-strip, .steps-grid, .admin-grid { grid-template-columns: 1fr; }
+  .summary-strip, .steps-grid, .passport-track, .admin-grid { grid-template-columns: 1fr; }
   .summary-strip > div, .steps-grid article { border-right: 0; border-bottom: 1px solid var(--line); }
   .summary-strip > div:last-child, .steps-grid article:last-child { border-bottom: 0; }
+  .passport-track article { border-right: 0; border-bottom: 1px solid var(--line); }
+  .passport-track article:last-child { border-bottom: 0; }
   .content-band, .page-shell { width: min(100% - 32px, 1180px); padding: 56px 0; }
   .setup-row { grid-template-columns: 42px 1fr; }
   .setup-row > :last-child { grid-column: 2; justify-self: start; }

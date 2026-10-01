@@ -5,7 +5,7 @@ import { Ticket } from "lucide-react";
 import { ConnectWallet } from "./ConnectWallet";
 
 const links = [
-  ["Eligibility", "/eligibility"],
+  ["Passport", "/passport"],
   ["Winners", "/history"],
   ["Claim", "/claim"],
   ["Admin", "/admin"],

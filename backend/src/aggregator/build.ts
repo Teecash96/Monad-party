@@ -5,8 +5,7 @@ import { prisma } from "../db/pool";
 import { uploadSnapshot } from "./ipfs";
 import { publishEligibilityRoot, readEligibilityRoot } from "./contract";
 import { epochRange } from "../domain/epoch";
-
-const MIN_GAS_SPENT_WEI = new Prisma.Decimal("1000000000000000");
+import { partyRules } from "../domain/party";
 
 export interface SnapshotEntry {
   index: number;
@@ -37,27 +36,34 @@ export function assertSnapshotCoverage(epochId: bigint, cursor: Coverage | null,
 }
 
 export async function eligibleWallets(epochId: bigint) {
+  const rules = partyRules();
+  if (!rules) throw new Error("Party game is not configured");
   const freshSince = new Date(Date.now() - Number(process.env.TWITTER_FRESHNESS_HOURS || 24) * 60 * 60 * 1000);
-  const activity = await prisma.txActivity.findMany({
-    where: {
-      epochId,
-      txCount: { gte: 3 },
-      gasSpentWei: { gte: MIN_GAS_SPENT_WEI },
-    },
-    orderBy: { walletAddress: "asc" },
+  const stamps = await prisma.partyStamp.findMany({
+    where: { partyId: rules.id, epochId },
+    orderBy: [{ walletAddress: "asc" }, { completedAt: "asc" }],
   });
+  const daysByWallet = new Map<string, Set<number>>();
+  for (const stamp of stamps) {
+    const days = daysByWallet.get(stamp.walletAddress) || new Set<number>();
+    days.add(Math.floor(stamp.completedAt / 86400));
+    daysByWallet.set(stamp.walletAddress, days);
+  }
+  const qualifiedWallets = [...daysByWallet.entries()]
+    .filter(([, days]) => days.size >= 2)
+    .map(([wallet]) => wallet)
+    .sort();
   const twitter = await prisma.twitterVerification.findMany({
     where: {
-      walletAddress: { in: activity.map((row) => row.walletAddress) },
-      followersCount: { gte: 100 },
+      walletAddress: { in: qualifiedWallets },
       revokedAt: null,
       verifiedAt: { gte: freshSince },
     },
   });
   const byWallet = new Map(twitter.map((row) => [row.walletAddress, row]));
-  return activity
-    .filter((row) => byWallet.has(row.walletAddress))
-    .map((row) => ({ activity: row, twitter: byWallet.get(row.walletAddress)! }));
+  return qualifiedWallets
+    .filter((walletAddress) => byWallet.has(walletAddress))
+    .map((walletAddress) => ({ walletAddress, twitter: byWallet.get(walletAddress)! }));
 }
 
 export async function buildSnapshot(epochId: bigint): Promise<SnapshotPayload> {
@@ -67,7 +73,7 @@ export async function buildSnapshot(epochId: bigint): Promise<SnapshotPayload> {
   const values = eligible.map((row, index) => [
     epochId.toString(),
     index.toString(),
-    getAddress(row.activity.walletAddress),
+    getAddress(row.walletAddress),
   ]);
   const tree = StandardMerkleTree.of(values, ["uint256", "uint256", "address"]);
   const payload: SnapshotPayload = {
@@ -78,7 +84,7 @@ export async function buildSnapshot(epochId: bigint): Promise<SnapshotPayload> {
     createdAt: new Date().toISOString(),
     entries: eligible.map((row, index) => ({
       index,
-      address: row.activity.walletAddress,
+      address: row.walletAddress,
       proof: tree.getProof(index),
     })),
   };

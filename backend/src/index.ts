@@ -8,6 +8,7 @@ import { merkleRouter } from "./api/merkle";
 import { twitterRouter } from "./api/twitter";
 import { historyRouter } from "./api/history";
 import { adminRouter } from "./api/admin";
+import { partyRouter } from "./api/party";
 import { prisma } from "./db/pool";
 import { runtimeReadiness } from "./config/readiness";
 
@@ -41,6 +42,7 @@ app.use("/api/merkle", merkleRouter);
 app.use("/api/twitter", twitterRouter);
 app.use("/api/history", historyRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/party", partyRouter);
 
 app.use((error: unknown, _request: Request, response: Response, _next: NextFunction) => {
   if (error instanceof ZodError) {

@@ -1,5 +1,6 @@
 import { isAddress } from "ethers";
 import { prisma } from "../db/pool";
+import { partyRules } from "../domain/party";
 
 export type ValidationProfile = "local" | "testnet" | "production";
 
@@ -43,19 +44,29 @@ export function configReadiness() {
   contracts.ready = contracts.ready && validAddress("ELIGIBILITY_REGISTRY_ADDRESS") && validAddress("RAFFLE_CORE_ADDRESS");
   if (!contracts.ready && contracts.missing.length === 0) contracts.missing.push("valid contract addresses");
 
+  const party = present("PARTY_GAME_ADDRESS", "PARTY_GAME_URL");
+  if (party.ready) {
+    try {
+      partyRules();
+    } catch {
+      party.ready = false;
+      party.missing.push("valid party game configuration");
+    }
+  }
+
   const indexing = present("INDEXER_START_BLOCK");
   const publishing = present("PINATA_JWT", "REGISTRY_PUBLISHER_PRIVATE_KEY");
   publishing.ready = publishing.ready && process.env.PUBLISH_ROOT === "true";
   if (process.env.PUBLISH_ROOT !== "true") publishing.missing.push("PUBLISH_ROOT=true");
 
-  return { database, network, twitter, contracts, indexing, publishing };
+  return { database, network, twitter, contracts, party, indexing, publishing };
 }
 
 export function validateEnvironment(profile: ValidationProfile): string[] {
   const checks = configReadiness();
   const required = profile === "local"
     ? ["database", "network"] as const
-    : ["database", "network", "twitter", "contracts", "indexing", "publishing"] as const;
+    : ["database", "network", "twitter", "contracts", "party", "indexing", "publishing"] as const;
   const issues = required.flatMap((name) => checks[name].missing.map((item) => `${name}: ${item}`));
 
   if (profile === "production") {
@@ -78,7 +89,7 @@ export async function runtimeReadiness() {
   }
   const features = configReadiness();
   const requireFull = process.env.REQUIRE_FULL_CONFIG === "true";
-  const requested = (process.env.REQUIRED_FEATURES || "network,twitter,contracts,indexing,publishing")
+  const requested = (process.env.REQUIRED_FEATURES || "network,twitter,contracts,party,indexing,publishing")
     .split(",")
     .map((name) => name.trim())
     .filter(Boolean) as Array<keyof typeof features>;
