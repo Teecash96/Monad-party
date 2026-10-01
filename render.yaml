@@ -83,5 +83,7 @@ services:
         sync: false
       - key: NEXT_PUBLIC_ELIGIBILITY_REGISTRY_ADDRESS
         sync: false
+      - key: NEXT_PUBLIC_PARTY_GAME_ADDRESS
+        sync: false
       - key: NEXT_PUBLIC_SUPPORT_EMAIL
         sync: false

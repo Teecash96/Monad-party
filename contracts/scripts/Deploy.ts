@@ -30,6 +30,15 @@ async function main() {
   const balance = await ethers.provider.getBalance(deployer.address);
   if (balance === 0n) throw new Error("Deployer has no native MON for deployment gas");
 
+  // Deploy the first party game used by the passport. A future partner can
+  // replace this address if it emits the same MilestoneCompleted event.
+  console.log("\n0. Deploying MonadPartyGame...");
+  const MonadPartyGame = await ethers.getContractFactory("MonadPartyGame");
+  const partyGame = await MonadPartyGame.deploy(deployer.address);
+  await partyGame.waitForDeployment();
+  const partyGameAddress = await partyGame.getAddress();
+  console.log("MonadPartyGame deployed to:", partyGameAddress);
+
   // 1. Deploy EligibilityRegistry
   console.log("\n1. Deploying EligibilityRegistry...");
   const EligibilityRegistry = await ethers.getContractFactory("EligibilityRegistry");
@@ -76,6 +85,7 @@ async function main() {
     deployer: deployer.address,
     timestamp: new Date().toISOString(),
     contracts: {
+      MonadPartyGame: partyGameAddress,
       EligibilityRegistry: eligibilityRegistryAddress,
       PythEntropyCoordinator: entropyCoordinatorAddress,
       VRFWrapper: vrfWrapperAddress,
@@ -97,6 +107,7 @@ async function main() {
 
   // Print summary
   console.log("\n=== DEPLOYMENT SUMMARY ===");
+  console.log("MonadPartyGame:", partyGameAddress);
   console.log("EligibilityRegistry:", eligibilityRegistryAddress);
   console.log("PythEntropyCoordinator:", entropyCoordinatorAddress);
   console.log("VRFWrapper:", vrfWrapperAddress);

@@ -46,7 +46,7 @@ CONFIRM_DEPLOY_CHAIN_ID=10143 npm run deploy:testnet
 2. Set `PARTY_GAME_ADDRESS`, `PARTY_GAME_URL`, and `PARTY_MINIMUM_MILESTONE` to the verified partner game values.
 3. Run the indexer and confirm full epoch coverage.
 4. Connect three real test wallets and three real X accounts.
-5. Complete the configured game milestone on two different UTC days with each wallet.
+5. Publish each daily answer commitment on `MonadPartyGame`, then complete the configured game milestone on two different UTC days with each wallet.
 6. Run the weekly snapshot after the epoch closes and the indexer confirms the final blocks. The hosted schedule is Monday 00:30 UTC.
 7. Fund the epoch with a small test amount.
 8. Request the draw after the five minute delay.

@@ -32,6 +32,13 @@ test("party passport explains the weekly entry path", async ({ page }) => {
   await page.goto("/passport");
   await expect(page.getByRole("heading", { name: "Game Night Passport" })).toBeVisible();
   await expect(page.getByText("Complete the featured game milestone on two different UTC days")).toBeVisible();
-  await expect(page.getByText("Partner game pending")).toBeVisible();
+  await expect(page.getByText("Featured game pending deployment")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+});
+
+test("featured game page stays honest before contract deployment", async ({ page }) => {
+  await page.goto("/game");
+  await expect(page.getByRole("heading", { name: "Daily Party Challenge" })).toBeVisible();
+  await expect(page.getByText("Game contract pending")).toBeVisible();
+  await expect(page.getByText("Game actions are disabled until the contract is configured.")).toBeVisible();
 });

@@ -6,6 +6,7 @@ function configuredAddress(value: string | undefined): Address {
 
 export const raffleAddress = configuredAddress(process.env.NEXT_PUBLIC_RAFFLE_CORE_ADDRESS);
 export const registryAddress = configuredAddress(process.env.NEXT_PUBLIC_ELIGIBILITY_REGISTRY_ADDRESS);
+export const partyGameAddress = configuredAddress(process.env.NEXT_PUBLIC_PARTY_GAME_ADDRESS);
 export const contractsConfigured = raffleAddress !== zeroAddress && registryAddress !== zeroAddress;
 
 export const raffleAbi = parseAbi([
@@ -27,4 +28,12 @@ export const randomnessAbi = parseAbi([
 
 export const registryAbi = parseAbi([
   "function getRoot(uint256) view returns (bytes32 merkleRoot,uint256 eligibleCount,string snapshotUri)",
+]);
+
+export const partyGameAbi = parseAbi([
+  "function currentDay() view returns (uint64)",
+  "function challengeHash(uint64) view returns (bytes32)",
+  "function completed(address,uint64) view returns (bool)",
+  "function makeAnswerHash(bytes32 answer,bytes32 salt) pure returns (bytes32)",
+  "function play(uint64 utcDay,bytes32 answer,bytes32 salt)",
 ]);

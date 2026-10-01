@@ -52,6 +52,8 @@ Set `PARTY_GAME_ADDRESS` to the verified partner game contract and `PARTY_GAME_U
 
 `INDEXER_BLOCK_BATCH` must stay at 100 or lower because the Monad testnet RPC limits each log query to 100 blocks.
 
+The repository includes `MonadPartyGame` as the first party game. It uses an owner published daily answer commitment and emits `MilestoneCompleted` after a correct reveal. The deployment script prints its address. Set `PARTY_GAME_URL` to the hosted `/game` route after deployment.
+
 Set `INDEXER_START_BLOCK` to a confirmed block at or before the start of the first epoch you will publish. The snapshot job refuses to create a root unless the indexer proves full confirmed coverage from the epoch start through the epoch end.
 
 3. Install and migrate the backend.
@@ -114,7 +116,7 @@ npm run preflight:testnet
 CONFIRM_ENTROPY_SMOKE_CHAIN_ID=10143 npm run smoke:entropy:testnet
 ```
 
-5. Deploy to testnet only after the callback arrives.
+5. Deploy to testnet only after the callback arrives. This also deploys `MonadPartyGame` and prints its address.
 
 ```bash
 CONFIRM_DEPLOY_CHAIN_ID=10143 npm run deploy:testnet
@@ -122,7 +124,7 @@ CONFIRM_DEPLOY_CHAIN_ID=10143 npm run deploy:testnet
 
 The script deploys `EligibilityRegistry`, `PythEntropyCoordinator`, `VRFWrapper`, and `RaffleCore`. It also locks the callback links between the contracts. It refuses the wrong chain, an Entropy address without bytecode, a failed fee call, and an empty deployer balance.
 
-6. Put the deployed registry and raffle addresses in the backend and frontend environment files.
+6. Put the deployed game, registry, and raffle addresses in the backend and frontend environment files. Set the backend game URL to `https://monad-party.onrender.com/game`.
 
 7. Set a limited registry publisher wallet, then transfer contract ownership to the sponsor multisig. The backend publisher can set immutable roots but cannot fund, pause, draw, or change ownership.
 

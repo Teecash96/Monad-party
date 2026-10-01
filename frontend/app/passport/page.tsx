@@ -3,6 +3,7 @@
 import { CalendarCheck, ExternalLink, Gamepad2, RefreshCw, TicketCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import Link from "next/link";
 import { ConnectWallet } from "@/components/ConnectWallet";
 import { EligibilityCard } from "@/components/EligibilityCard";
 import { api, type Eligibility, type Party } from "@/lib/api";
@@ -50,7 +51,7 @@ export default function PassportPage() {
         <article><TicketCheck /><span>Entry</span><h2>Join the draw</h2><p>Connect X and your completed passport unlocks one weekly entry.</p></article>
       </section>
 
-      {preview && <div className="party-callout"><strong>Partner game pending</strong><p>This preview shows the passport flow. Verified stamps activate when a game contract is selected.</p></div>}
+      {preview && <div className="party-callout"><strong>Featured game pending deployment</strong><p>This preview shows the passport flow. See the <Link href="/game" className="text-link">Daily Party Challenge</Link> screen while the contract is prepared.</p></div>}
       {!preview && party?.configured && party.gameUrl && <a className="button button-primary" href={party.gameUrl} target="_blank" rel="noreferrer">Open featured game <ExternalLink size={17} /></a>}
       {!preview && party && !party.configured && <div className="party-callout"><strong>Partner game pending</strong><p>The backend is ready for a verified game contract.</p></div>}
 

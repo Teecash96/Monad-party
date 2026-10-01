@@ -19,7 +19,7 @@ The product joins social identity, repeat game participation, sponsor incentives
 ## Technology
 
 1. Monad EVM and native MON prizes.
-2. Solidity contracts with immutable roots, unique winners, claims, pause, and rollover.
+2. Solidity contracts with a first party daily game, immutable roots, unique winners, claims, pause, and rollover.
 3. Pyth Entropy adapter for verifiable randomness.
 4. Node, TypeScript, PostgreSQL, X OAuth 2.0 PKCE, and encrypted tokens.
 5. Next.js, wagmi, and viem.
