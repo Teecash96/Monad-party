@@ -39,6 +39,12 @@ services:
         value: network,twitter,contracts,party,indexing,publishing
       - key: PUBLISH_ROOT
         value: "true"
+      - key: INDEXER_START_BLOCK
+        value: "67300176"
+      - key: INDEXER_CONFIRMATIONS
+        value: "20"
+      - key: INDEXER_BLOCK_BATCH
+        value: "100"
       - key: FRONTEND_URL
         sync: false
       - key: TWITTER_CLIENT_ID
@@ -49,6 +55,10 @@ services:
         sync: false
       - key: TOKEN_ENCRYPTION_KEY
         generateValue: true
+      - key: PINATA_JWT
+        sync: false
+      - key: REGISTRY_PUBLISHER_PRIVATE_KEY
+        sync: false
       - key: ELIGIBILITY_REGISTRY_ADDRESS
         sync: false
       - key: RAFFLE_CORE_ADDRESS
@@ -63,9 +73,9 @@ services:
     runtime: node
     region: frankfurt
     plan: free
-    rootDir: frontend
-    buildCommand: npm ci && npm run build
-    startCommand: npm start
+    rootDir: ""
+    buildCommand: npm --prefix frontend ci --include=dev && npm --prefix frontend run build
+    startCommand: npm --prefix frontend start -- --hostname 0.0.0.0
     envVars:
       - key: NODE_ENV
         value: production
@@ -79,6 +89,8 @@ services:
         value: https://testnet.monadvision.com
       - key: NEXT_PUBLIC_BACKEND_URL
         sync: false
+      - key: NEXT_PUBLIC_PREVIEW_MODE
+        value: "false"
       - key: NEXT_PUBLIC_RAFFLE_CORE_ADDRESS
         sync: false
       - key: NEXT_PUBLIC_ELIGIBILITY_REGISTRY_ADDRESS
