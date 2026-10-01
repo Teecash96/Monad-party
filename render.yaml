@@ -1,14 +1,14 @@
 # yaml-language-server: $schema=https://render.com/schema/render.yaml.json
 databases:
-  - name: proof-of-play-db
-    plan: free
+  - name: monad-party-db
+    plan: basic_256mb
     region: frankfurt
-    databaseName: proof_of_play
-    user: proof_of_play
+    databaseName: monad_party_db
+    user: monad_party_db_user
 
 services:
   - type: web
-    name: proof-of-play-api
+    name: monad-party-api
     runtime: node
     region: frankfurt
     plan: free
@@ -21,7 +21,7 @@ services:
         value: production
       - key: DATABASE_URL
         fromDatabase:
-          name: proof-of-play-db
+          name: monad-party-db
           property: connectionString
       - key: MONAD_RPC_URL
         value: https://testnet-rpc.monad.xyz
@@ -59,7 +59,7 @@ services:
         sync: false
 
   - type: web
-    name: proof-of-play-web
+    name: monad-party
     runtime: node
     region: frankfurt
     plan: free
