@@ -1,4 +1,4 @@
-import { gameEvents, parseMilestoneLog, partyProgress, partyRules } from "./party";
+import { gameEvents, MIN_TWITTER_FOLLOWERS, parseMilestoneLog, partyProgress, partyRules, twitterEligibility } from "./party";
 
 const env = { ...process.env };
 
@@ -31,7 +31,7 @@ test("rejects other contracts and milestones below the threshold", () => {
   expect(parseMilestoneLog({ address: "0x3333333333333333333333333333333333333333", ...encoded }, rules)).toBeNull();
 });
 
-test("requires two different UTC days and a fresh X verification", () => {
+test("requires two different UTC days and an eligible X verification", () => {
   const firstDay = Date.UTC(2026, 8, 28) / 1000;
   expect(partyProgress([firstDay, firstDay + 3600], true, true).eligible).toBe(false);
   expect(partyProgress([firstDay, firstDay + 86400], false, true).eligible).toBe(false);
@@ -41,4 +41,10 @@ test("requires two different UTC days and a fresh X verification", () => {
     returnComplete: true,
     eligible: true,
   });
+});
+
+test("requires at least 100 fresh X followers", () => {
+  expect(twitterEligibility(true, MIN_TWITTER_FOLLOWERS - 1)).toBe(false);
+  expect(twitterEligibility(true, MIN_TWITTER_FOLLOWERS)).toBe(true);
+  expect(twitterEligibility(false, MIN_TWITTER_FOLLOWERS + 1)).toBe(false);
 });

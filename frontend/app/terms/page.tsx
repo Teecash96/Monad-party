@@ -13,7 +13,7 @@ export default function TermsPage() {
 
       <section>
         <h2>Eligibility</h2>
-        <p>You must control the wallet and X account that you connect. You must complete the featured game milestone on two different UTC days in the same weekly epoch. Your X verification must be current when the final snapshot runs.</p>
+        <p>You must control the wallet and X account that you connect. You must complete the featured game milestone on two different UTC days in the same weekly epoch. Your X account must have at least 100 followers, and your X verification must be current when the final snapshot runs.</p>
       </section>
       <section>
         <h2>Fair use</h2>

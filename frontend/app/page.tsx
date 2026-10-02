@@ -31,7 +31,7 @@ export default function HomePage() {
         <div className="steps-grid">
           <article><span>01</span><Gamepad2 /><h3>Earn a stamp</h3><p>Complete the verified milestone in this week&apos;s featured Monad game.</p></article>
           <article><span>02</span><CalendarCheck /><h3>Come back</h3><p>Return on another UTC day and complete the milestone again.</p></article>
-          <article><span>03</span><ShieldCheck /><h3>Complete your passport</h3><p>Connect X to unlock one entry in the sponsor funded weekly draw.</p></article>
+          <article><span>03</span><ShieldCheck /><h3>Complete your passport</h3><p>Connect X with at least 100 followers to unlock one entry in the sponsor funded weekly draw.</p></article>
         </div>
       </section>
     </>

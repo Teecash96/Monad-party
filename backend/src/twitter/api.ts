@@ -1,6 +1,17 @@
 export interface TwitterProfile {
   id: string;
   username: string;
+  followersCount: number;
+}
+
+interface TwitterProfileResponse {
+  data?: {
+    id?: unknown;
+    username?: unknown;
+    public_metrics?: {
+      followers_count?: unknown;
+    };
+  };
 }
 
 export class TwitterApiError extends Error {
@@ -10,15 +21,22 @@ export class TwitterApiError extends Error {
 }
 
 export async function getTwitterProfile(accessToken: string): Promise<TwitterProfile> {
-  const response = await fetch("https://api.x.com/2/users/me", {
+  const response = await fetch("https://api.x.com/2/users/me?user.fields=public_metrics", {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
   if (!response.ok) {
     throw new TwitterApiError(`X profile request failed with status ${response.status}`, response.status);
   }
-  const body = await response.json() as { data?: TwitterProfile };
-  if (!body.data) throw new Error("X profile response did not include a user");
-  return body.data;
+  const body = await response.json() as TwitterProfileResponse;
+  const profile = body.data;
+  const followersCount = profile?.public_metrics?.followers_count;
+  if (typeof profile?.id !== "string" || typeof profile.username !== "string") {
+    throw new Error("X profile response did not include a user");
+  }
+  if (typeof followersCount !== "number" || !Number.isSafeInteger(followersCount) || followersCount < 0) {
+    throw new Error("X profile response did not include a valid follower count");
+  }
+  return { id: profile.id, username: profile.username, followersCount };
 }
 
 export async function revokeTwitterGrant(accessToken: string): Promise<void> {

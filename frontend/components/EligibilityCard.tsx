@@ -8,7 +8,14 @@ export function EligibilityCard({ value }: { value: Eligibility }) {
   const rows = [
     { label: "Game milestone", value: value.milestoneComplete ? "Stamped" : "Not completed", pass: value.milestoneComplete },
     { label: "Second active day", value: value.returnComplete ? "Stamped" : `${value.activeDays} of 2 days`, pass: value.returnComplete },
-    { label: "X connection", value: value.twitterFresh ? `@${value.twitterUsername}` : "Needs connection", pass: value.twitterFresh },
+    { label: "X connection", value: value.twitterFresh ? `@${value.twitterUsername}` : "Needs connection or refresh", pass: value.twitterFresh },
+    {
+      label: "X followers",
+      value: value.twitterFollowersCount === null
+        ? "Not available"
+        : `${value.twitterFollowersCount} / ${value.party.minimumTwitterFollowers} minimum`,
+      pass: value.twitterEligible,
+    },
     { label: "Weekly entry", value: value.eligible ? "Unlocked" : "Locked", pass: value.eligible },
   ];
   return (

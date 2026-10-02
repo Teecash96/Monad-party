@@ -4,7 +4,7 @@ import { z } from "zod";
 import { prisma } from "../db/pool";
 import { epochIdAt } from "../domain/epoch";
 import { asyncRoute } from "./utils";
-import { partyProgress, partyRules } from "../domain/party";
+import { MIN_TWITTER_FOLLOWERS, partyProgress, partyRules, twitterEligibility } from "../domain/party";
 
 export const eligibilityRouter = Router();
 
@@ -24,7 +24,9 @@ eligibilityRouter.get("/:address", asyncRoute(async (request, response) => {
   const twitterConnected = Boolean(twitter && !twitter.revokedAt);
   const freshnessMs = Number(process.env.TWITTER_FRESHNESS_HOURS || 24) * 60 * 60 * 1000;
   const twitterFresh = Boolean(twitterConnected && twitter!.verifiedAt.getTime() >= Date.now() - freshnessMs);
-  const progress = partyProgress(stamps.map((stamp) => stamp.completedAt), twitterFresh, Boolean(rules));
+  const twitterFollowersCount = twitterConnected ? twitter!.followersCount : null;
+  const twitterEligible = twitterEligibility(twitterFresh, twitterFollowersCount ?? 0);
+  const progress = partyProgress(stamps.map((stamp) => stamp.completedAt), twitterEligible, Boolean(rules));
 
   response.json({
     epochId: epochId.toString(),
@@ -34,10 +36,13 @@ eligibilityRouter.get("/:address", asyncRoute(async (request, response) => {
       gameAddress: rules?.gameAddress || null,
       gameUrl: rules?.gameUrl || null,
       minimumMilestone: rules?.minimumMilestone || null,
+      minimumTwitterFollowers: MIN_TWITTER_FOLLOWERS,
     },
     ...progress,
     twitterConnected,
     twitterFresh,
+    twitterFollowersCount,
+    twitterEligible,
     twitterUsername: twitterConnected ? twitter!.username : null,
   });
 }));

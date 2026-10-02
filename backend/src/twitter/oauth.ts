@@ -115,7 +115,7 @@ export async function completeAuthorization(state: string, code: string) {
       update: {
         twitterId: profile.id,
         username: profile.username,
-        followersCount: 0,
+        followersCount: profile.followersCount,
         accessTokenEncrypted: encrypt(tokens.access_token),
         refreshTokenEncrypted: tokens.refresh_token ? encrypt(tokens.refresh_token) : undefined,
         tokenExpiresAt: new Date(Date.now() + tokens.expires_in * 1000),
@@ -126,7 +126,7 @@ export async function completeAuthorization(state: string, code: string) {
         walletAddress: pending.walletAddress,
         twitterId: profile.id,
         username: profile.username,
-        followersCount: 0,
+        followersCount: profile.followersCount,
         accessTokenEncrypted: encrypt(tokens.access_token),
         refreshTokenEncrypted: tokens.refresh_token ? encrypt(tokens.refresh_token) : null,
         tokenExpiresAt: new Date(Date.now() + tokens.expires_in * 1000),
@@ -159,7 +159,7 @@ export async function recheckVerification(id: string) {
       where: { id },
       data: {
         username: profile.username,
-        followersCount: 0,
+        followersCount: profile.followersCount,
         accessTokenEncrypted: encrypt(accessToken),
         refreshTokenEncrypted,
         tokenExpiresAt,

@@ -12,6 +12,12 @@ export interface PartyRules {
   gameUrl: string;
 }
 
+export const MIN_TWITTER_FOLLOWERS = 100;
+
+export function twitterEligibility(fresh: boolean, followersCount: number): boolean {
+  return fresh && Number.isSafeInteger(followersCount) && followersCount >= MIN_TWITTER_FOLLOWERS;
+}
+
 export function partyRules(): PartyRules | null {
   if (!process.env.PARTY_GAME_ADDRESS) return null;
   const gameAddress = getAddress(process.env.PARTY_GAME_ADDRESS).toLowerCase();
@@ -39,13 +45,13 @@ export function parseMilestoneLog(
   }
 }
 
-export function partyProgress(timestamps: number[], twitterFresh: boolean, configured: boolean) {
+export function partyProgress(timestamps: number[], twitterEligible: boolean, configured: boolean) {
   const days = [...new Set(timestamps.map((time) => Math.floor(time / 86400)))].sort((a, b) => a - b);
   return {
     milestoneComplete: days.length > 0,
     returnComplete: days.length >= 2,
     activeDays: days.length,
     days: days.map((day) => new Date(day * 86400000).toISOString().slice(0, 10)),
-    eligible: configured && days.length >= 2 && twitterFresh,
+    eligible: configured && days.length >= 2 && twitterEligible,
   };
 }

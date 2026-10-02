@@ -12,6 +12,7 @@ export interface Eligibility {
     gameAddress: string | null;
     gameUrl: string | null;
     minimumMilestone: string | null;
+    minimumTwitterFollowers: number;
   };
   milestoneComplete: boolean;
   returnComplete: boolean;
@@ -19,6 +20,8 @@ export interface Eligibility {
   days: string[];
   twitterConnected: boolean;
   twitterFresh: boolean;
+  twitterFollowersCount: number | null;
+  twitterEligible: boolean;
   twitterUsername: string | null;
 }
 
@@ -35,6 +38,8 @@ export interface Party {
 export interface TwitterStatus {
   connected: boolean;
   username: string | null;
+  followersCount: number | null;
+  minimumFollowers: number;
   fresh: boolean;
   eligible: boolean;
   verifiedAt: string | null;

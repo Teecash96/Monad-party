@@ -44,7 +44,7 @@ export function ConnectTwitter() {
     setError("");
     try {
       await api.disconnectTwitter(await signedPayload("disconnect"));
-      setStatus({ connected: false, username: null, fresh: false, eligible: false, verifiedAt: null });
+      setStatus({ connected: false, username: null, followersCount: null, minimumFollowers: 100, fresh: false, eligible: false, verifiedAt: null });
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Could not disconnect X");
     } finally {
@@ -58,7 +58,12 @@ export function ConnectTwitter() {
       <div className="connection-row">
         <div>
           <span className="status-label"><AtSign size={17} />{status.username}</span>
-          <p className="muted">X account connected</p>
+          <p className="muted">
+            {status.followersCount ?? 0} followers
+            {status.eligible
+              ? " · Eligible for entry"
+              : ` · Need ${status.minimumFollowers} followers and a fresh check`}
+          </p>
         </div>
         <button className="button button-quiet" onClick={disconnect} disabled={busy}>
           <Unlink size={17} />Disconnect

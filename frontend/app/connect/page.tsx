@@ -22,7 +22,7 @@ export default function ConnectPage() {
         </div>
         <div className="setup-row">
           <span className="step-icon">@</span>
-          <div><h2>X account</h2><p>Connect one X account to complete your weekly passport.</p></div>
+          <div><h2>X account</h2><p>Connect one X account with at least 100 followers to complete your weekly passport.</p></div>
           <ConnectTwitter />
         </div>
       </section>

@@ -1,6 +1,6 @@
 # Monad Party
 
-Monad Party is a weekly Game Night Passport and prize draw. A wallet must complete the verified milestone in the featured Monad game on two different UTC days in one weekly epoch and link a current X account. One completed passport creates one entry.
+Monad Party is a weekly Game Night Passport and prize draw. A wallet must complete the verified milestone in the featured Monad game on two different UTC days in one weekly epoch and link a current X account with at least 100 followers. One completed passport creates one entry.
 
 Three unique winner positions receive 50 percent, 30 percent, and 20 percent of the funded pool.
 

@@ -5,7 +5,7 @@ import { prisma } from "../db/pool";
 import { uploadSnapshot } from "./ipfs";
 import { publishEligibilityRoot, readEligibilityRoot } from "./contract";
 import { epochRange } from "../domain/epoch";
-import { partyRules } from "../domain/party";
+import { MIN_TWITTER_FOLLOWERS, partyRules } from "../domain/party";
 
 export interface SnapshotEntry {
   index: number;
@@ -58,6 +58,7 @@ export async function eligibleWallets(epochId: bigint) {
       walletAddress: { in: qualifiedWallets },
       revokedAt: null,
       verifiedAt: { gte: freshSince },
+      followersCount: { gte: MIN_TWITTER_FOLLOWERS },
     },
   });
   const byWallet = new Map(twitter.map((row) => [row.walletAddress, row]));

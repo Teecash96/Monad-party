@@ -7,6 +7,7 @@ import { completeAuthorization, createAuthorization } from "../twitter/oauth";
 import { createWalletChallenge, consumeWalletChallenge } from "../auth/challenge";
 import { decrypt } from "../twitter/crypto";
 import { revokeTwitterGrant } from "../twitter/api";
+import { MIN_TWITTER_FOLLOWERS, twitterEligibility } from "../domain/party";
 import { asyncRoute } from "./utils";
 
 export const twitterRouter = Router();
@@ -46,11 +47,14 @@ twitterRouter.get("/status/:address", asyncRoute(async (request, response) => {
   const connected = Boolean(verification && !verification.revokedAt);
   const freshnessMs = Number(process.env.TWITTER_FRESHNESS_HOURS || 24) * 60 * 60 * 1000;
   const fresh = Boolean(connected && verification!.verifiedAt.getTime() >= Date.now() - freshnessMs);
+  const followersCount = connected ? verification!.followersCount : null;
   response.json({
     connected,
     username: connected ? verification!.username : null,
+    followersCount,
+    minimumFollowers: MIN_TWITTER_FOLLOWERS,
     fresh,
-    eligible: fresh,
+    eligible: twitterEligibility(fresh, followersCount ?? 0),
     verifiedAt: connected ? verification!.verifiedAt : null,
   });
 }));

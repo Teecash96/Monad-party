@@ -42,13 +42,13 @@ export default function PassportPage() {
       <div className="page-heading">
         <p className="eyebrow">This week&apos;s party</p>
         <h1>Game Night Passport</h1>
-        <p>Complete the featured game milestone on two different UTC days and connect X. One completed passport creates one entry.</p>
+        <p>Complete the featured game milestone on two different UTC days and connect X with at least 100 followers. One completed passport creates one entry.</p>
       </div>
 
       <section className="passport-track" aria-label="Passport stamps">
         <article><Gamepad2 /><span>Stamp 01</span><h2>Play</h2><p>Complete the verified milestone in the featured Monad game.</p></article>
         <article><CalendarCheck /><span>Stamp 02</span><h2>Come back</h2><p>Complete the milestone again on another UTC day.</p></article>
-        <article><TicketCheck /><span>Entry</span><h2>Join the draw</h2><p>Connect X and your completed passport unlocks one weekly entry.</p></article>
+        <article><TicketCheck /><span>Entry</span><h2>Join the draw</h2><p>Connect X with at least 100 followers and your completed passport unlocks one weekly entry.</p></article>
       </section>
 
       {preview && <div className="party-callout"><strong>Featured game pending deployment</strong><p>This preview shows the passport flow. See the <Link href="/game" className="text-link">Daily Party Challenge</Link> screen while the contract is prepared.</p></div>}

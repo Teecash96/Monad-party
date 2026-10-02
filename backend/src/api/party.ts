@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { epochIdAt } from "../domain/epoch";
-import { partyRules } from "../domain/party";
+import { MIN_TWITTER_FOLLOWERS, partyRules } from "../domain/party";
 
 export const partyRouter = Router();
 
@@ -13,6 +13,11 @@ partyRouter.get("/current", (_request, response) => {
     gameAddress: rules?.gameAddress || null,
     gameUrl: rules?.gameUrl || null,
     minimumMilestone: rules?.minimumMilestone || null,
-    requirements: ["Complete the featured game milestone", "Return and complete it on a second UTC day", "Connect X"],
+    requirements: [
+      "Complete the featured game milestone",
+      "Return and complete it on a second UTC day",
+      `Connect X with at least ${MIN_TWITTER_FOLLOWERS} followers`,
+    ],
+    minimumTwitterFollowers: MIN_TWITTER_FOLLOWERS,
   });
 });
